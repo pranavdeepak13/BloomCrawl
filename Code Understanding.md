@@ -1,5 +1,5 @@
 # BloomCrawl — Code Walkthrough
-> Line-by-line explanation of every file with full mathematical derivations.
+> Explanation of every file with full mathematical derivations.
 
 ---
 
