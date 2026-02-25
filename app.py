@@ -1,6 +1,19 @@
 """
 BloomCrawl — Streamlit Dashboard
-Run: streamlit run app.py
+
+Run commands
+────────────
+Dashboard:
+    PYTHONDONTWRITEBYTECODE=1 .venv/bin/streamlit run app.py
+
+Tests:
+    PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest tests/ -v
+
+Benchmark plots (1k / 10k / 100k / 1M):
+    PYTHONDONTWRITEBYTECODE=1 .venv/bin/python benchmarks/plot_benchmarks.py
+
+Benchmark timing (pytest-benchmark):
+    PYTHONDONTWRITEBYTECODE=1 .venv/bin/pytest benchmarks/bench_bloom_filter.py --benchmark-only -v
 
 Tabs: Search | Crawler | BloomFilter | Cache | Benchmarks
 """
@@ -110,7 +123,7 @@ with tab_search:
             label_visibility="collapsed",
         )
     with col_btn:
-        search_clicked = st.button("Search", type="primary", use_container_width=True)
+        search_clicked = st.button("Search", type="primary", width='stretch')
 
     if raw_query and search_clicked:
         result = parser.parse(raw_query)
@@ -318,7 +331,7 @@ with tab_crawler:
             [{"Status": e["status"], "URL": e["url"],
               "Title": e.get("title",""), "Children": e.get("children","")}
              for e in log[-100:]],
-            use_container_width=True, hide_index=True,
+            width='stretch', hide_index=True,
         )
 
     if ps.page_count() > 0:
@@ -328,7 +341,7 @@ with tab_crawler:
               "Snippet": p.snippet[:90], "SimHash": f"{p.signature.value:016x}",
               "Children": len(p.child_urls)}
              for p in ps._pages.values()],
-            use_container_width=True, hide_index=True,
+            width='stretch', hide_index=True,
         )
 
         if ps.page_count() >= 2:
@@ -344,7 +357,7 @@ with tab_crawler:
             df = pd.DataFrame(matrix, index=labels, columns=labels)
             st.dataframe(
                 df.style.background_gradient(cmap="RdYlGn_r", vmin=0, vmax=32),
-                use_container_width=True,
+                width='stretch',
             )
 
 
@@ -487,8 +500,8 @@ with tab_cache:
     with col_v:
         cache_value = st.text_input("JSON value", placeholder='{"results": []}', key="cache_v")
     with col_b2:
-        cache_get = st.button("GET", use_container_width=True)
-        cache_set = st.button("SET", use_container_width=True)
+        cache_get = st.button("GET", width='stretch')
+        cache_set = st.button("SET", width='stretch')
 
     if cache_query:
         if cache_get:
@@ -534,7 +547,7 @@ with tab_cache:
                     "Bloom": "", "Outcome": "stored",
                     "Result": str(e.get("value",""))[:60],
                 })
-        st.dataframe(log_rows, use_container_width=True, hide_index=True)
+        st.dataframe(log_rows, width='stretch', hide_index=True)
 
     st.divider()
     st.subheader("Traffic Simulation")
@@ -604,7 +617,7 @@ with tab_benchmarks:
         st.subheader(title)
         st.caption(caption)
         if path.exists():
-            st.image(str(path), use_container_width=True)
+            st.image(str(path), width='stretch')
         else:
             st.warning(f"Not found: benchmarks/plots/{filename}  —  run  python benchmarks/plot_benchmarks.py")
         st.divider()
@@ -628,7 +641,7 @@ with tab_benchmarks:
             "Ratio":            f"{s_kb/b_kb:.0f}x",
             "Saved (MB)":       f"{(s_kb-b_kb)/1024:.2f}",
         })
-    st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.dataframe(rows, width='stretch', hide_index=True)
     st.info(
         "BloomFilter is ~80x more memory-efficient than a Python set() at all values of N. "
         "Absolute savings reach 90 MB at N = 1,000,000."
