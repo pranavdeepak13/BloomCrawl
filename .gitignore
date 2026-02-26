@@ -10,3 +10,4 @@ __pycache__/
 .env
 Code_Understanding.md
 ROADMAP.md
+.pytest_cache/
